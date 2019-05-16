@@ -25,6 +25,9 @@ exports.createMapView = function (win) {
   });
   win.add(mapView);
 
+  Map.getMapAsync { googleMap -> googleMap.uiSettings.setAllGesturesEnabled(false)
+  };
+
   //Reusable labels for parking polygons
   var parkingImage;
   if (Ti.UI.iOS) {

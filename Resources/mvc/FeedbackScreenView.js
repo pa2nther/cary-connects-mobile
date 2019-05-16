@@ -11,7 +11,7 @@ exports.createfeedbackScreenView = function (win) {
   var infoButton = Ti.UI.createButton({
     title: 'Comments'
   });
-  infoButton.addEventListener('click', function(){
+  infoButton.addEventListener('click', function () {
     Ti.App.fireEvent('ShowFeedbackScreen');
   });
 
@@ -29,8 +29,8 @@ exports.createfeedbackScreenView = function (win) {
 
   var caryConnectsLogo = Ti.UI.createImageView({
     image: '/assets/icons/DefaultIcon_white_inside.png',
-    width: '80%',
-    height: '110dp'
+    width: 340 + 'dp',
+    height: 190 + 'dp'
   });
 
   feedbackScreenView.add(caryConnectsLogo);
@@ -40,24 +40,22 @@ exports.createfeedbackScreenView = function (win) {
     width: '80%',
     top: '5%',
     height: 'auto',
-    color:  '#000000',
-    hintTextColor:  '#666666',
+    color: '#000000',
+    hintTextColor: '#666666',
     backgroundColor: '#ffffff',
     hintText: 'Your comments',
-    verticalAlign:  1
+    verticalAlign: 1
 
   });
   feedbackScreenView.add(feedbackScreenTextbox);
 
 
-
   var continueButton = Ti.UI.createButton({
     textAlign: textAlign,
-    verticalAlign: Titanium.UI.TEXT_VERTICAL_ALIGNMENT_BOTTOM,
     top: "5%",
     height: '35dp',
-    width: '140dp',
-    title: 'Return to Map',
+    width: '200dp',
+    title: 'Send Feedback / Close',
     fontWeight: 'bold',
     borderRadius: '10dp',
     borderColor: '#ffffff',
@@ -66,8 +64,6 @@ exports.createfeedbackScreenView = function (win) {
 
   });
   feedbackScreenView.add(continueButton);
-
-
 
   continueButton.addEventListener('touchstart', function () {
     continueButton.backgroundColor = '#ffffff';
@@ -83,8 +79,7 @@ exports.createfeedbackScreenView = function (win) {
     width: '80%',
     height: 'auto',
     color: '#ffffff',
-    font: {
-    },
+    font: {},
     textAlign: 'center',
     text: 'Thank you for your comments on the app.',
     verticalAlign: 1
@@ -98,32 +93,33 @@ exports.createfeedbackScreenView = function (win) {
   });
 
   Ti.App.addEventListener('CloseFeedbackScreen', function () {
-    //needs code to save feedback
-    Ti.UI.Android.hideSoftKeyboard();
-    if (feedbackScreenTextbox.hasText()){
-    var url = "http://cary-dtcparking.herokuapp.com/api/send/";
-    var client = Ti.Network.createHTTPClient({
-     // function called when the response data is available
-     onload : function(e) {
-         Ti.API.info("Received text: " + this.responseText);
-         alert('success');
-     },
-     // function called when an error occurs, including a timeout
-     onerror : function(e) {
-         Ti.API.debug(e.error);
-         alert('error'+e.error);
-     },
-     timeout : 5000  // in milliseconds
- });
- // Prepare the connection.
- client.open("POST", url);
- // Send the request.
- client.send("message="+feedbackScreenTextbox.value);
+    if (Ti.UI.Android) {
+      Ti.UI.Android.hideSoftKeyboard();
+    }
+    if (feedbackScreenTextbox.hasText()) {
+      var url = "http://cary-dtcparking.herokuapp.com/api/send/";
+      var client = Ti.Network.createHTTPClient({
+        // function called when the response data is available
+        onload: function (e) {
+          Ti.API.info("Received text: " + this.responseText);
+          alert('Your feedback was submitted');
+        },
+        // function called when an error occurs, including a timeout
+        onerror: function (e) {
+          Ti.API.debug(e.error);
+          alert('error' + e.error);
+        },
+        timeout: 5000  // in milliseconds
+      });
+      // Prepare the connection.
+      client.open("POST", url);
+      // Send the request.
+      client.send("message=" + feedbackScreenTextbox.value);
     }
     feedbackScreenView.animate({
       opacity: 0,
       duration: 200
-    }, function() {
+    }, function () {
       feedbackScreenView.visible = false;
       win.rightNavButton = infoButton;
     });
